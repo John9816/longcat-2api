@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  longcat-2api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - API_KEY=${API_KEY:-your_secret_api_key_here}
+      - HOST=0.0.0.0
+      - PORT=8000
+      - LONGCAT_API_URL=${LONGCAT_API_URL:-https://longcat.chat/api/v1/chat-completion-V2}
+      - LONGCAT_ORIGIN=${LONGCAT_ORIGIN:-https://longcat.chat}
+      - USER_AGENT=${USER_AGENT:-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36}
+      - REQUEST_TIMEOUT=${REQUEST_TIMEOUT:-60}
+      - STREAM_TIMEOUT=${STREAM_TIMEOUT:-120}
+      - DEBUG=${DEBUG:-false}
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
